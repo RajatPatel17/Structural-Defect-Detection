@@ -13,9 +13,9 @@ model = genai.GenerativeModel('gemini-2.5-flash-lite')
 #Lets Create sidebar for Image Upload 
 
 st.sidebar.title(':red[Upload the Images of Defect Here]')
-uploaded_image = st.sidebar.file_uploader('Image',type=['jpeg','jpg','png','jfif'])
+uploaded_image = st.sidebar.file_uploader('Images',type=['jpeg','jpg','png','jfif'],accept_multiple_files=True)
+uploaded_image = [Image.open(img) for img in uploaded_image]
 if uploaded_image:
-    uploaded_image = Image.open(uploaded_image)
     st.sidebar.success('Image has been uploaded Sucessfully')
     st.sidebar.subheader(':blue[Uploaded Images]')
     st.sidebar.image(uploaded_image)
@@ -130,26 +130,26 @@ if st.button('SUBMIT'):
                     - Clear section headings
                     - Bullet points
                     - Numbered lists
-                    - Tables wherever appropriate (especially for defect summary, severity, cost, and time)
+                    - Use Tables As much as possible (especially for defect summary, severity, cost, and time)
                     • Maintain a professional engineering tone
                     • Ensure the total content does **not exceed 3 pages** in a standard Word document
                     • Avoid unnecessary verbosity; prioritize clarity and technical accuracy
 
                     <Final Instruction>
-                    Keep whole presentation professional as well make sure it is precise and meaningful
+                    Keep whole Report professional as well make sure it is precise and meaningful
                     Do Not Include HTML Formats like <br> and others
                     Do not mention AI, prompts, or image limitations.
                     Present the report as if prepared by a qualified structural engineering professional.
 
             '''
-        response = model.generate_content([prompt,uploaded_image],
+        response = model.generate_content([prompt,*uploaded_image],
                                           generation_config={'temperature':0.9})
         st.write(response.text)
 
-        if st.download_button(
-            label='Click To Download',
-            data=response.text,
-            file_name='Structural_defect_report.txt',
-            mime='text/plain'
-        ):
-            st.success('The File is Downloaded Successfully')
+    if st.download_button(
+    label='Click To Download',
+    data=response.text,
+    file_name='Structural_defect_report.txt',
+    mime='text/plain'
+    ):
+        st.success('The File is Downloaded Successfully')
